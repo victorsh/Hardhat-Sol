@@ -15,9 +15,9 @@ contract HotelRoom {
 
   function checkout() external {
     require(currentStatus == Statuses.Occupied, "The room is vacant");
-    require(msg.sender == occupant, "Only the current occupant can checkout");
+    require(msg.sender == occupant, "Only current occupant");
     currentStatus = Statuses.Vacant;
-    occupant = address(0x0);
+    occupant = address(0);
   }
 
   modifier onlyWhileVacant {

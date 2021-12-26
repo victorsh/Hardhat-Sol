@@ -1,8 +1,9 @@
+//SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.7;
 
 contract AddressBook {
   mapping(address => address[]) private addresses;
-  mapping(address => mapping(address => string)) aliases;
+  mapping(address => mapping(address => string)) private aliases;
 
   function getAddressArray(address addr) public view returns (address[] memory) {
     return addresses[addr];
