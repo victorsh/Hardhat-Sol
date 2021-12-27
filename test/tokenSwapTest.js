@@ -18,6 +18,7 @@ describe("TokenSwap", function () {
     await bobToken.deployed()
     tx = await bobToken.balanceOf(accounts[1].address)
     console.log(ethers.utils.formatEther(tx))
+    console.log(tx)
 
     const AliceToken = await ethers.getContractFactory("BobToken")
     const aliceToken = await AliceToken.connect(accounts[2]).deploy('AliceToken', 'ATN')
@@ -29,26 +30,24 @@ describe("TokenSwap", function () {
     const tokenSwap = await TokenSwap.deploy(bobToken.address, accounts[1].address, aliceToken.address, accounts[2].address);
     await tokenSwap.deployed()
 
-    tx = await bobToken.connect(accounts[1]).approve(tokenSwap.address, '5')
+    tx = await bobToken.connect(accounts[1]).approve(tokenSwap.address, ethers.utils.parseUnits('5', 18))
     await tx.wait()
-    console.log(await bobToken.allowance(accounts[1].address, tokenSwap.address))
+    console.log(ethers.utils.formatUnits(await bobToken.allowance(accounts[1].address, tokenSwap.address), 18))
 
-    await bobToken.connect(accounts[1]).transfer(tokenSwap.address, '10')
+    // await bobToken.connect(accounts[1]).transfer(tokenSwap.address, '10')
 
-    tx = await aliceToken.connect(accounts[2]).approve(tokenSwap.address, '5')
+    tx = await aliceToken.connect(accounts[2]).approve(tokenSwap.address, ethers.utils.parseUnits('5', 18))
     await tx.wait()
-    console.log(await aliceToken.allowance(accounts[2].address, tokenSwap.address))
+    console.log(ethers.utils.formatUnits(await aliceToken.allowance(accounts[2].address, tokenSwap.address), 18))
     
-    await aliceToken.connect(accounts[2]).transfer(tokenSwap.address, '10')
+    // await aliceToken.connect(accounts[2]).transfer(tokenSwap.address, '10')
     
+    tx = await tokenSwap.connect(accounts[2]).swap(ethers.utils.parseUnits('1', 18), ethers.utils.parseUnits('5', 18))
 
-    tx = await tokenSwap.connect(accounts[2]).swap('1', '1')
-    // await tx.wait()
-    // console.log(tx)
+    tx = await bobToken.balanceOf(accounts[2].address)
+    console.log(ethers.utils.formatUnits(tx, 18))
 
-    // txBob = await bobToken.balanceOf(accounts[0].address)
-    // console.log(ethers.utils.formatEther(txBob))
-    // txAlice = await aliceToken.connect(accounts[1]).balanceOf(accounts[1].address)
-    // console.log(ethers.utils.formatEther(txAlice))
+    tx = await aliceToken.connect(accounts[2]).balanceOf(accounts[1].address)
+    console.log(ethers.utils.formatUnits(tx, 18))
   });
 });
