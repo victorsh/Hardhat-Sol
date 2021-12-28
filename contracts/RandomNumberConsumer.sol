@@ -173,8 +173,10 @@ contract RandomNumberConsumer is VRFConsumerBase {
   bytes32 internal keyHash;
   uint256 internal fee;
   uint256 public randomResult;
+  bool fulfilled = false;
 
   event RandomRequested(bytes32 indexed requestId, address indexed caller);
+  event RandomFulfilled(bytes32 indexed requestId, uint256 indexed result);
 
   constructor(address _vrfCoordinator, address _link, bytes32 _keyHash, uint256 _fee) VRFConsumerBase(_vrfCoordinator, _link) {
     keyHash = _keyHash;
@@ -183,12 +185,20 @@ contract RandomNumberConsumer is VRFConsumerBase {
 
   function getRandomNumber() public returns (bytes32 requestId) {
     require(LINK.balanceOf(address(this)) >= fee, "Not enough LINK to fill request");
+    fulfilled = false;
     requestId = requestRandomness(keyHash, fee);
     emit RandomRequested(requestId, msg.sender);
     return requestId;
   }
 
   function fulfillRandomness(bytes32 requestId, uint256 randomness) internal override {
+    fulfilled = true;
     randomResult = randomness;
+    emit RandomFulfilled(requestId, randomness);
+  }
+
+  function getRandom() external view returns(uint256) {
+    require(fulfilled, "request has not been fulfilled yet.");
+    return randomResult;
   }
 }
