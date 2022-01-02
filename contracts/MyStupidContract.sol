@@ -10,6 +10,7 @@ contract MyStupidContract {
   }
 
   Item[] public items;
+  uint256 itemsCount;
   uint256 public aNum;
   uint256[] public aNums;
   
@@ -45,6 +46,10 @@ contract MyStupidContract {
 
     // remove
     uintAddrIndex[3] = uintAddrIndex[uintAddrCount];
+
+    Item memory _item = Item(5, "hi");
+    items.push(_item);
+    itemsCount++;
 
   }
 
